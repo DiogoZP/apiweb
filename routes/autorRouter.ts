@@ -7,7 +7,7 @@ const autorRouter = Router();
 // Retornar todos os autores
 autorRouter.get("/", async (req, res) => {
     const autores = await prisma.autor.findMany();
-    return res.json(autores);
+    return res.status(200).json(autores);
 });
 
 // Buscar um autor pelo id
@@ -24,7 +24,7 @@ autorRouter.get("/:id", async (req, res) => {
         return res.status(404).json({ error: "Autor não encontrado" });
 
     // Retorna o autor se encontrado  
-    return res.json(autor);
+    return res.status(200).json(autor);
 });
 
 // Criar um novo autor
@@ -64,7 +64,7 @@ autorRouter.put("/:id", async (req, res) => {
         }
     });
     // Retorna o autor atualizado
-    return res.json(autorUpdated);
+    return res.status(200).json(autorUpdated);
 });
 
 // Deletar um autor
@@ -86,8 +86,8 @@ autorRouter.delete("/:id", async (req, res) => {
             id: Number(id)
         }
     });
-    // Retorna o autor deletado
-    return res.sendStatus(200);
+    // Retorna um status 204 (No Content)
+    return res.sendStatus(204);
 });
 
 export default autorRouter;

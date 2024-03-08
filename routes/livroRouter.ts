@@ -7,7 +7,7 @@ const livroRouter = Router();
 // Retornar todos os livros
 livroRouter.get("/", (req, res) => {
     const livros = prisma.livro.findMany();
-    return res.json(livros);
+    return res.status(200).json(livros);
 });
 
 // Buscar um livro pelo id
@@ -24,7 +24,7 @@ livroRouter.get("/:id", (req, res) => {
         return res.status(404).json({ error: "Livro não encontrado" });
 
     // Retorna o livro se encontrado  
-    return res.json(livro);
+    return res.status(200).json(livro);
 });
 
 // Criar um novo livro
@@ -68,7 +68,7 @@ livroRouter.put("/:id", async (req, res) => {
     });
 
     // Retorna o livro atualizado
-    return res.json(livroUpdated);
+    return res.status(200).json(livroUpdated);
 });
 
 // Deletar um livro
@@ -91,8 +91,8 @@ livroRouter.delete("/:id", async (req, res) => {
         }
     });
 
-    // Retorna status OK
-    res.sendStatus(200);
+    // Retorna um status 204 (No Content)
+    res.sendStatus(204);
 });
 
 export default livroRouter;
