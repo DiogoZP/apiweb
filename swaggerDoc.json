@@ -1,27 +1,30 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "My API",
-    "description": "Description",
+    "title": "API Michelan",
+    "description": "API feita e documentada para o trabalho da matéria do Michel",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
   "basePath": "/",
+  
   "schemes": [
     "http"
   ],
+  
   "paths": {
     "/autores/": {
       "get": {
-        "description": "",
+        "description": "Lista todos os autores cadastrados no banco de dados e retorna em formato de JSON.",
         "responses": {
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": ["Autores"]
       },
       "post": {
-        "description": "",
+        "description": "Rota para criação de um novo autor através do método POST passando como parâmetro o nome do autor.",
         "parameters": [
           {
             "name": "body",
@@ -30,22 +33,24 @@
               "type": "object",
               "properties": {
                 "nome": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
           }
         ],
+        "tags": ["Autores"],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Autor criado com sucesso"
           }
         }
       }
+      
     },
     "/autores/{id}": {
       "get": {
-        "description": "",
+        "description": "Rota para buscar um autor por ID passado na url, buscando e mostrando somente o autor referente aquele ID.",
         "parameters": [
           {
             "name": "id",
@@ -54,17 +59,18 @@
             "type": "string"
           }
         ],
+        "tags": ["Autores"],
         "responses": {
           "200": {
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Autor não encontrado"
           }
         }
       },
       "put": {
-        "description": "",
+        "description": "Rota para atualizar o nome de autor baseado em seu ID através de uma requisição put passando os parametros que deseja alterar",
         "parameters": [
           {
             "name": "id",
@@ -72,6 +78,7 @@
             "required": true,
             "type": "string"
           },
+          
           {
             "name": "body",
             "in": "body",
@@ -85,17 +92,18 @@
             }
           }
         ],
+        "tags": ["Autores"],
         "responses": {
           "200": {
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Autor atualizdo com sucesso"
           }
         }
       },
       "delete": {
-        "description": "",
+        "description": "Rota para deletar um autor do banco através do método delete passando como parâmetro o ID",
         "parameters": [
           {
             "name": "id",
@@ -104,27 +112,30 @@
             "type": "string"
           }
         ],
+        "tags": ["Autores"],
         "responses": {
           "204": {
             "description": "No Content"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Autor não encontrado"
           }
         }
       }
     },
     "/livros/": {
       "get": {
-        "description": "",
+        "description": "Lista todos os livros cadastrados em formato JSON",
         "responses": {
           "200": {
             "description": "OK"
           }
-        }
+        },
+        "tags": ["Livros"]
+        
       },
       "post": {
-        "description": "",
+        "description": "Rota para criação de Livros usando método POST e passando como parmetro os campos abaixo, ela tem um campo de chve estrangeira com a tabela Autores",
         "parameters": [
           {
             "name": "body",
@@ -133,18 +144,19 @@
               "type": "object",
               "properties": {
                 "titulo": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "genero": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "autorId": {
-                  "example": "any"
+                  "example": "int"
                 }
               }
             }
           }
         ],
+        "tags": ["Livros"],
         "responses": {
           "201": {
             "description": "Created"
@@ -154,7 +166,7 @@
     },
     "/livros/{id}": {
       "get": {
-        "description": "",
+        "description": "Busca um Livro especifico por pelo seu ID",
         "parameters": [
           {
             "name": "id",
@@ -163,17 +175,18 @@
             "type": "string"
           }
         ],
+        "tags": ["Livros"],
         "responses": {
           "200": {
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Livro não encontrado"
           }
         }
       },
       "put": {
-        "description": "",
+        "description": "Rota para atualizar um Livro baseado em seu ID através de uma requisição put passando os parametros que deseja alterar",
         "parameters": [
           {
             "name": "id",
@@ -200,17 +213,18 @@
             }
           }
         ],
+        "tags": ["Livros"],
         "responses": {
           "200": {
             "description": "OK"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Livro não encontrado"
           }
         }
       },
       "delete": {
-        "description": "",
+        "description": "Rota para deletar um Livro baseado em seu ID",
         "parameters": [
           {
             "name": "id",
@@ -219,12 +233,13 @@
             "type": "string"
           }
         ],
+        "tags": ["Livros"],
         "responses": {
           "204": {
             "description": "No Content"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Livro não encontrado"
           }
         }
       }
