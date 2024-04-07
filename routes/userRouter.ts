@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 
 const userRouter = Router();
@@ -28,12 +30,16 @@ userRouter.get("/:id", (req, res)=>{
 
 
 userRouter.post("/create", async (req, res)=>{
-    const {senha, email} = req.body;
+    const {senha, email, nome} = req.body;
+
+
+    const enciptedPassword = await bcrypt.hash(senha, 15)   
 
     const user = await prisma.user.create({
         data: {
-            senha, 
-            email
+            senha: enciptedPassword, 
+            email,
+            nome
         }
     })
 
@@ -79,4 +85,39 @@ userRouter.patch("/:id", async (req, res)=>{
     return res.status(200).json("Usuário atualizado com sucesso")
 })
 
+
+userRouter.post("/login", async (req, res)=>{
+    const { senha, email } = req.body
+
+    const userFind = await prisma.user.findUnique({
+        where: {
+            email : email 
+        }
+    })
+
+    if(!userFind){
+        res.status(400).json("Credenciais incorretas")
+    } else {
+
+        const verifyPass = await bcrypt.compare(senha, userFind.senha)
+
+        if(!verifyPass){
+            res.status(400).json("Credenciais incorretas")
+        }
+    
+        const token = jwt.sign({id: userFind.id}, process.env.JWT_PASS ?? '', {
+            expiresIn: '3h'
+        })
+
+        const {senha:_, ...userLogin} = userFind
+
+        return res.status(200).json({
+            user: userLogin,
+            token: token
+        })
+    }
+
+
+
+})
 export default userRouter;
