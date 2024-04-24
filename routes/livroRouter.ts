@@ -5,15 +5,15 @@ const prisma = new PrismaClient();
 const livroRouter = Router();
 
 // Retornar todos os livros
-livroRouter.get("/", (req, res) => {
-    const livros = prisma.livro.findMany();
-    return res.status(200).json(livros);
+livroRouter.get("/", async (req, res) => {
+    const livros = await prisma.livro.findMany({});
+    return res.json(livros);
 });
 
 // Buscar um livro pelo id
-livroRouter.get("/:id", (req, res) => {
+livroRouter.get("/:id", async (req, res) => {
     const { id } = req.params;
-    const livro = prisma.livro.findUnique({
+    const livro = await prisma.livro.findUnique({
         where: {
             id: Number(id)
         }
