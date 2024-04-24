@@ -5,15 +5,15 @@ const prisma = new PrismaClient();
 const livroRouter = Router();
 
 // Retornar todos os livros
-livroRouter.get("/", (req, res) => {
-    const livros = prisma.livro.findMany();
-    return res.status(200).json(livros);
+livroRouter.get("/", async (req, res) => {
+    const livros = await prisma.livro.findMany({});
+    return res.json(livros);
 });
 
 // Buscar um livro pelo id
-livroRouter.get("/:id", (req, res) => {
+livroRouter.get("/:id", async (req, res) => {
     const { id } = req.params;
-    const livro = prisma.livro.findUnique({
+    const livro = await prisma.livro.findUnique({
         where: {
             id: Number(id)
         }
@@ -29,12 +29,12 @@ livroRouter.get("/:id", (req, res) => {
 
 // Criar um novo livro
 livroRouter.post("/", async (req, res) => {
-    const { titulo, genero, autorId } = req.body;
+    const { titulo, genero ,autor} = req.body;
     const livro = await prisma.livro.create({
         data: {
             titulo,
             genero,
-            autorId
+            autor
         }
     });
     // Retorna o livro criado
@@ -44,7 +44,7 @@ livroRouter.post("/", async (req, res) => {
 // Atualizar um livro
 livroRouter.put("/:id", async (req, res) => {
     const { id } = req.params;
-    const { titulo, genero, autorId } = req.body;
+    const { titulo, genero, autor} = req.body;
     
     // Verifica se o livro existe
     const livro = await prisma.livro.findUnique({
@@ -63,7 +63,7 @@ livroRouter.put("/:id", async (req, res) => {
         data: {
             titulo,
             genero,
-            autorId
+            autor
         }
     });
 
