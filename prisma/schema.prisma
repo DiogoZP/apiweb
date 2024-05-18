@@ -27,14 +27,11 @@ model User {
 } 
 
 model Movimentacao {
-  id               Int       @id @default(autoincrement())
-  dataRetirada     DateTime
-  dataDevolucao    DateTime?
-
+  id                Int       @id @default(autoincrement())
+  dataRetirada      String
+  dataDevolucao     String?
   livro             Livro     @relation(fields: [livroId], references: [id])
   livroId           Int
-
   user              User      @relation(fields: [userId], references: [id])
   userId            Int
-
 }

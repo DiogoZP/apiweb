@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { createToken, tokenValid } from "../jwtToken";
 
 
 const userRouter = Router();
@@ -26,9 +26,7 @@ userRouter.post("/login", async (req, res) => {
         return res.status(400).json("Credenciais incorretas");
     }
     
-    const token = jwt.sign({id: userFind.id}, process.env.JWT_PASS ?? 'teste', {
-        expiresIn: '3h'
-    });
+    const token = createToken(userFind.id);
 
     const { senha:_, ...userLogin } = userFind;
 
@@ -42,15 +40,13 @@ userRouter.get("/login", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
 
     if(!token){
-        return res.status(401).json("Token não informado");
+        return res.status(400).json({ error: "Token não informado" });
     }
 
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_PASS ?? 'teste');
-        return res.status(200).json(decoded);
-    }catch(err){
-        return res.status(401).json("Token inválido");
+    if(tokenValid(token)){
+        return res.status(200).json("Token válido");
     }
+
 });
 
 userRouter.get("/", async (req, res) =>{
