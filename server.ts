@@ -2,20 +2,24 @@ import express from "express";
 import cors from "cors";
 import livroRouter from "./routes/livroRouter";
 import userRouter from "./routes/userRouter";
+import movimentacaoRouter from "./routes/movimentacaoRouter";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "./swaggerDoc.json";
+import dotenv from "dotenv";
 
+dotenv.config();
+const port = process.env.PORT ?? 3000;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 app.use("/livros", livroRouter);
-app.use("/usuarios", userRouter)
+app.use("/usuarios", userRouter);
+app.use("/movimentos", movimentacaoRouter);
 app.use("/docs", swaggerUi.serve);
-
 app.get('/docs', swaggerUi.setup(swaggerDoc));
 
-app.listen(3000, () => {
-    console.log("Server rodando na porta 3000");
+app.listen(port, () => {
+    console.log(`Server rodando na porta ${port}`);
 });
 

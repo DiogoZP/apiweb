@@ -1,17 +1,33 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { tokenValid } from "../jwtToken";
 
 const prisma = new PrismaClient();
 const livroRouter = Router();
 
 // Retornar todos os livros
 livroRouter.get("/", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(400).json({ error: "Token não informado" });
+    }
+    if (!tokenValid(token)) {
+        return res.status(401).json({ error: "Token inválido" });
+    }
+
     const livros = await prisma.livro.findMany({});
     return res.json(livros);
 });
 
 // Buscar um livro pelo id
 livroRouter.get("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(400).json({ error: "Token não informado" });
+    }
+    if (!tokenValid(token)) {
+        return res.status(401).json({ error: "Token inválido" });
+    }
     const { id } = req.params;
     const livro = await prisma.livro.findUnique({
         where: {
@@ -29,7 +45,14 @@ livroRouter.get("/:id", async (req, res) => {
 
 // Criar um novo livro
 livroRouter.post("/", async (req, res) => {
-    const { titulo, genero ,autor} = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(400).json({ error: "Token não informado" });
+    }
+    if (!tokenValid(token)) {
+        return res.status(401).json({ error: "Token inválido" });
+    }
+    const { titulo, genero, autor} = req.body;
     const livro = await prisma.livro.create({
         data: {
             titulo,
@@ -43,6 +66,13 @@ livroRouter.post("/", async (req, res) => {
 
 // Atualizar um livro
 livroRouter.put("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(400).json({ error: "Token não informado" });
+    }
+    if (!tokenValid(token)) {
+        return res.status(401).json({ error: "Token inválido" });
+    }
     const { id } = req.params;
     const { titulo, genero, autor} = req.body;
     
@@ -73,6 +103,13 @@ livroRouter.put("/:id", async (req, res) => {
 
 // Deletar um livro
 livroRouter.delete("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(400).json({ error: "Token não informado" });
+    }
+    if (!tokenValid(token)) {
+        return res.status(401).json({ error: "Token inválido" });
+    }
     const { id } = req.params;
     // Verifica se o livro existe
     const livro = await prisma.livro.findUnique({
