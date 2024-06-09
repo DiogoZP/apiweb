@@ -20,9 +20,9 @@ model Livro {
 
 model User {
   id       Int       @id @default(autoincrement())
+  nome     String
   email    String    @unique
   senha    String
-  nome     String
   movimentacao Movimentacao[]
 } 
 
@@ -30,8 +30,8 @@ model Movimentacao {
   id                Int       @id @default(autoincrement())
   dataRetirada      String
   dataDevolucao     String?
-  livro             Livro     @relation(fields: [livroId], references: [id])
+  livro             Livro     @relation(fields: [livroId], references: [id], onDelete: Cascade)
   livroId           Int
-  user              User      @relation(fields: [userId], references: [id])
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            Int
 }

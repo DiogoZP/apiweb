@@ -6,14 +6,21 @@ dotenv.config();
 const secret = process.env.JWT_SECRET ?? "";
 
 function createToken(id: number){
-    return jwt.sign({id}, secret, {expiresIn: "3h"});
+    return jwt.sign({id}, secret, { expiresIn: "3h" });
 }
 
 function tokenValid(token: string){
-    if (jwt.verify(token, secret)){
-        return true;
+
+    try {
+        if (jwt.verify(token, secret)){
+            return true;
+        }
+        return false;
+    } catch (error) {
+        if(error instanceof jwt.TokenExpiredError)
+        return false;
     }
-    return false;
+    
 }
 
 export { createToken, tokenValid };

@@ -32,7 +32,7 @@ movimentacaoRouter.get("/:id", async (req, res) => {
         return res.status(401).json({ error: "Token inválido" });
     }
 
-    const id = req.params.id;
+    const { id } = req.params;
 
     const movimentacao = await prisma.movimentacao.findUnique({
         where : {
@@ -119,7 +119,7 @@ movimentacaoRouter.delete("/:id", async (req, res) => {
         return res.status(401).json({ error: "Token inválido" });
     }
     
-    const id = req.params.id;
+    const { id } = req.params;
 
     const movimentacaoExiste = await prisma.movimentacao.findUnique({
         where: {

@@ -3,12 +3,11 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import { createToken, tokenValid } from "../jwtToken";
 
-
 const userRouter = Router();
 const prisma = new PrismaClient();
 
 userRouter.post("/login", async (req, res) => {
-    const { senha, email } = req.body;
+    const { email, senha } = req.body;
 
     const userFind = await prisma.user.findUnique({
         where: {
@@ -17,13 +16,13 @@ userRouter.post("/login", async (req, res) => {
     });
 
     if(!userFind){
-        return res.status(400).json("Credenciais incorretas");
+        return res.status(401).json("Credenciais incorretas");
     }
 
     const verifyPass = await bcrypt.compare(senha, userFind.senha);
 
     if(!verifyPass){
-        return res.status(400).json("Credenciais incorretas");
+        return res.status(401).json("Credenciais incorretas");
     }
     
     const token = createToken(userFind.id);
@@ -38,7 +37,6 @@ userRouter.post("/login", async (req, res) => {
 
 userRouter.get("/login", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
-
     if(!token){
         return res.status(400).json({ error: "Token não informado" });
     }
@@ -47,15 +45,36 @@ userRouter.get("/login", async (req, res) => {
         return res.status(200).json("Token válido");
     }
 
+    return res.status(401).json("Token inválido");
 });
 
-userRouter.get("/", async (req, res) =>{
+userRouter.get("/", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if(!token){
+        return res.status(400).json({ error: "Token não informado" });
+    }
+
+    if(!tokenValid(token)){
+        return res.status(401).json("Token inválido");
+    }
+
     const usuarios = await prisma.user.findMany({});
     return res.status(200).json(usuarios);
 });
 
-userRouter.get("/:id", async (req, res)=>{
-    const id = req.params.id;
+userRouter.get("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if(!token){
+        return res.status(400).json({ error: "Token não informado" });
+    }
+
+    if(!tokenValid(token)){
+        return res.status(401).json("Token inválido");
+    }
+
+    const { id } = req.params;
 
     const user = await prisma.user.findUnique({
         where : {
@@ -71,37 +90,45 @@ userRouter.get("/:id", async (req, res)=>{
 });
 
 
-userRouter.post("/", async (req, res)=>{
-    const { senha, email, nome } = req.body;
+userRouter.post("/", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if(!token){
+        return res.status(400).json({ error: "Token não informado" });
+    }
+
+    if(!tokenValid(token)){
+        return res.status(401).json("Token inválido");
+    }
+
+    const { nome, email, senha } = req.body;
     
-    const encriptedPassword = await bcrypt.hash(senha, 15);
+    const encriptedPassword = await bcrypt.hash(senha, 1);
 
     const user = await prisma.user.create({
         data: {
-            senha: encriptedPassword, 
+            nome,
             email,
-            nome
+            senha: encriptedPassword
         }
     });
 
-    return res.status(201).json(user);
+    return res.status(201).json({ id: user.id, nome: user.nome, email: user.email });
 });
 
-userRouter.delete("/:id", async (req, res) => {
-    const id_delete = req.params.id;
+userRouter.put("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
 
-    await prisma.user.delete({
-        where: {
-            id: Number(id_delete)
-        }
-    });
-    
-    return res.status(204).json("Usuário deletado");
-});
+    if(!token){
+        return res.status(400).json({ error: "Token não informado" });
+    }
 
-userRouter.put("/:id", async (req, res)=>{
+    if(!tokenValid(token)){
+        return res.status(401).json("Token inválido");
+    }
+
     const { id } = req.params;
-    const { email, senha, nome } = req.body;
+    const { nome, email, senha } = req.body;
 
     const user = await prisma.user.findUnique({
         where : {
@@ -113,20 +140,43 @@ userRouter.put("/:id", async (req, res)=>{
         return res.status(400).send({message: "Usuário não encontrado"});
     }
 
-    const encriptedPassword = await bcrypt.hash(senha, 15);
+    const encriptedPassword = await bcrypt.hash(senha, 1);
 
     await prisma.user.update({
         where: {
             id: Number(id)
         },
         data: {
+            nome,
             email,
-            senha: encriptedPassword,
-            nome
+            senha: encriptedPassword
         }
     });
 
     return res.status(200).json("Usuário atualizado com sucesso");
 });
+
+userRouter.delete("/:id", async (req, res) => {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if(!token){
+        return res.status(400).json({ error: "Token não informado" });
+    }
+
+    if(!tokenValid(token)){
+        return res.status(401).json("Token inválido");
+    }
+
+    const { id } = req.params;
+
+    await prisma.user.delete({
+        where: {
+            id: Number(id)
+        }
+    });
+    
+    return res.status(204).json("Usuário deletado");
+});
+
 
 export default userRouter;
