@@ -2,8 +2,8 @@ import swaggerAutogen from 'swagger-autogen';
 
 const doc = {
     info: {
-      title: 'My API',
-      description: 'Description'
+      title: 'API Biblioteca',
+      description: 'API para gerenciamento de usuários, livros e movimentações em uma biblioteca'
     },
     host: 'localhost:3000',
     

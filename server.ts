@@ -17,7 +17,9 @@ app.use("/livros", livroRouter);
 app.use("/usuarios", userRouter);
 app.use("/movimentos", movimentacaoRouter);
 app.use("/docs", swaggerUi.serve);
-app.get('/docs', swaggerUi.setup(swaggerDoc));
+app.get('/docs', 
+    // #swagger.ignore = true
+    swaggerUi.setup(swaggerDoc));
 
 app.listen(port, () => {
     console.log(`Server rodando na porta ${port}`);
