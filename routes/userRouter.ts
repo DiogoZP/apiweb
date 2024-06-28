@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import { createToken, tokenValid } from "../jwtToken";
+import { Console } from "console";
 
 const userRouter = Router();
 const prisma = new PrismaClient();
@@ -9,7 +10,7 @@ const prisma = new PrismaClient();
 userRouter.post("/login", async (req, res) => {
     /*
     #swagger.tags = ['Usuários']
-    #swagger.description = 'Endpoint para realizar o login de usuário'
+    #swagger.description = 'Endpoint para realizar o ama de usuário, depois de realizado o login '
     #swagger.parameters['login'] = {
         in: 'body',
         description: 'Informações de login',
@@ -197,15 +198,26 @@ userRouter.post("/", async (req, res) => {
     
     const encriptedPassword = await bcrypt.hash(senha, 1);
 
-    const user = await prisma.user.create({
-        data: {
-            nome,
-            email,
-            senha: encriptedPassword
-        }
-    });
+    const emailExistente = await prisma.user.findUnique({where: {email : email}})
 
-    return res.status(201).json({ id: user.id, nome: user.nome, email: user.email });
+    if(emailExistente){
+        
+        
+        return res.status(400).json({ error: "Token não informado ou inválido" });;
+    } else {
+        const user = await prisma.user.create({
+            data: {
+                nome,
+                email,
+                senha: encriptedPassword
+            }
+        });
+        return res.status(201).json({ id: user.id, nome: user.nome, email: user.email });
+    }
+
+    
+
+    
 });
 
 userRouter.put("/:id", async (req, res) => {

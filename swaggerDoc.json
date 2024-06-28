@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "API Biblioteca",
-    "description": "API para gerenciamento de usuários, livros e movimentações em uma biblioteca",
+    "description": "API para gerenciamento de usuários, livros e movimentações em uma biblioteca. Todas as requisições aqui listadas e documentadas funcionam somente depois do login. Ao logar um token JWT é gerado e o mesmo é salvo e usado para realizar as demais requisições. ",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
@@ -226,7 +226,7 @@
         "tags": [
           "Usuários"
         ],
-        "description": "Endpoint para realizar o login de usuário",
+        "description": "Endpoint para realizar o login de usuário, ao realizar o login um token JWT é gerado e armazenado no navegador.<br /> Este Token dura por 3 horas depois o usuário é deslogado do sistema. <br /> Sem logar não é possível acessar as outras telas do sistema caso tente será redirecionado para uma página de erro 404",
         "parameters": [
           {
             "name": "login",
