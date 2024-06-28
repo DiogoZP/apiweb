@@ -6,12 +6,26 @@ const movimentacaoRouter = Router();
 const prisma = new PrismaClient();
 
 movimentacaoRouter.get("/", async (req, res) => {
+    /*
+    #swagger.tags = ['Movimentações']
+    #swagger.description = 'Endpoint para retornar todas as movimentações'
+    #swagger.security = [{
+        "BearerAuth": []
+    }]
+    #swagger.responses[200] = {
+        description: 'Movimentações encontradas com sucesso'
+    }
+    #swagger.responses[401] = {
+        description: 'Token não informado ou inválido'
+    }
+    */
     const token = req.headers.authorization?.split(" ")[1];
+    
     if (!token) {
-        return res.status(400).json({ error: "Token não informado" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     if (!tokenValid(token)) {
-        return res.status(401).json({ error: "Token inválido" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
 
     const movimentacoes = await prisma.movimentacao.findMany({
@@ -24,12 +38,32 @@ movimentacaoRouter.get("/", async (req, res) => {
 });
 
 movimentacaoRouter.get("/:id", async (req, res) => {
+    /*
+    #swagger.tags = ['Movimentações']
+    #swagger.description = 'Endpoint para buscar movimentação por id'
+    #swagger.parameters['id'] = { 
+        in: 'path',
+        description: 'Id da movimentação' 
+    }
+    #swagger.security = [{
+        "BearerAuth": []
+    }]
+    #swagger.responses[200] = {
+        description: 'Movimentação encontrada com sucesso'
+    }
+    #swagger.responses[401] = {
+        description: 'Token não informado ou inválido'
+    }
+    #swagger.responses[404] = {
+        description: 'Movimentação não encontrada'
+    }
+    */
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(400).json({ error: "Token não informado" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     if (!tokenValid(token)) {
-        return res.status(401).json({ error: "Token inválido" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
 
     const { id } = req.params;
@@ -52,12 +86,36 @@ movimentacaoRouter.get("/:id", async (req, res) => {
 });
 
 movimentacaoRouter.post("/", async (req, res) => {
+    /*
+    #swagger.tags = ['Movimentações']
+    #swagger.description = 'Endpoint para criar uma nova movimentação'
+    #swagger.parameters['movimentacao'] = {
+        in: 'body',
+        description: 'Informações da movimentação',
+        required: true,
+        schema: {
+            dataRetirada: '2024-06-10T03:00:00.000Z',
+            dataDevolucao: '2024-06-20T03:00:00.000Z',
+            livroId: 1,
+            userId: 1
+        }
+    }
+    #swagger.security = [{
+        "BearerAuth": []
+    }]
+    #swagger.responses[201] = {
+        description: 'Movimentação criada com sucesso'
+    }
+    #swagger.responses[401] = {
+        description: 'Token não informado ou inválido'
+    }
+    */
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(400).json({ error: "Token não informado" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     if (!tokenValid(token)) {
-        return res.status(401).json({ error: "Token inválido" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
 
     const { dataRetirada, dataDevolucao, livroId, userId } = req.body;
@@ -74,12 +132,43 @@ movimentacaoRouter.post("/", async (req, res) => {
 });
 
 movimentacaoRouter.put("/:id", async (req, res) => {
+    /*
+    #swagger.tags = ['Movimentações']
+    #swagger.description = 'Endpoint para atualizar uma movimentação'
+    #swagger.parameters['id'] = { 
+        in: 'path',
+        description: 'Id da movimentação' 
+    }
+    #swagger.parameters['movimentacao'] = {
+        in: 'body',
+        description: 'Informações da movimentação',
+        required: true,
+        schema: {
+            dataRetirada: '2024-06-10T03:00:00.000Z',
+            dataDevolucao: '2024-06-20T03:00:00.000Z',
+            livroId: 1,
+            userId: 1
+        }
+    }
+    #swagger.security = [{
+        "BearerAuth": []
+    }]
+    #swagger.responses[200] = {
+        description: 'Movimentação atualizada com sucesso'
+    }
+    #swagger.responses[401] = {
+        description: 'Token não informado ou inválido'
+    }
+    #swagger.responses[404] = {
+        description: 'Movimentação não encontrada'
+    }
+    */
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(400).json({ error: "Token não informado" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     if (!tokenValid(token)) {
-        return res.status(401).json({ error: "Token inválido" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
 
     const { id } = req.params;
@@ -111,12 +200,32 @@ movimentacaoRouter.put("/:id", async (req, res) => {
 });
 
 movimentacaoRouter.delete("/:id", async (req, res) => {
+    /*
+    #swagger.tags = ['Movimentações']
+    #swagger.description = 'Endpoint para deletar uma movimentação'
+    #swagger.parameters['id'] = { 
+        in: 'path',
+        description: 'Id da movimentação' 
+    }
+    #swagger.security = [{
+        "BearerAuth": []
+    }]
+    #swagger.responses[200] = {
+        description: 'Movimentação deletada com sucesso'
+    }
+    #swagger.responses[401] = {
+        description: 'Token não informado ou inválido'
+    }
+    #swagger.responses[404] = {
+        description: 'Movimentação não encontrada'
+    }
+    */
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-        return res.status(400).json({ error: "Token não informado" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     if (!tokenValid(token)) {
-        return res.status(401).json({ error: "Token inválido" });
+        return res.status(401).json({ error: "Token não informado ou inválido" });
     }
     
     const { id } = req.params;
@@ -136,7 +245,7 @@ movimentacaoRouter.delete("/:id", async (req, res) => {
         }
     });
 
-    return res.status(204).json("Movimentação deletada");
+    return res.status(200).json("Movimentação deletada com sucesso");
 });
 
 export default movimentacaoRouter;

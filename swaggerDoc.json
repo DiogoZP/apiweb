@@ -1,247 +1,715 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "API Michelan",
-    "description": "API feita e documentada para o trabalho da matéria do Michel",
+    "title": "API Biblioteca",
+    "description": "API para gerenciamento de usuários, livros e movimentações em uma biblioteca. Todas as requisições aqui listadas e documentadas funcionam somente depois do login. Ao logar um token JWT é gerado e o mesmo é salvo e usado para realizar as demais requisições. ",
     "version": "1.0.0"
   },
   "host": "localhost:3000",
   "basePath": "/",
-  
   "schemes": [
     "http"
   ],
-  
   "paths": {
-    "/autores/": {
-      "get": {
-        "description": "Lista todos os autores cadastrados no banco de dados e retorna em formato de JSON.",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "tags": ["Autores"]
-      },
-      "post": {
-        "description": "Rota para criação de um novo autor através do método POST passando como parâmetro o nome do autor.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nome": {
-                  "example": "string"
-                }
-              }
-            }
-          }
-        ],
-        "tags": ["Autores"],
-        "responses": {
-          "201": {
-            "description": "Autor criado com sucesso"
-          }
-        }
-      }
-      
-    },
-    "/autores/{id}": {
-      "get": {
-        "description": "Rota para buscar um autor por ID passado na url, buscando e mostrando somente o autor referente aquele ID.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": ["Autores"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Autor não encontrado"
-          }
-        }
-      },
-      "put": {
-        "description": "Rota para atualizar o nome de autor baseado em seu ID através de uma requisição put passando os parametros que deseja alterar",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nome": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "tags": ["Autores"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Autor atualizdo com sucesso"
-          }
-        }
-      },
-      "delete": {
-        "description": "Rota para deletar um autor do banco através do método delete passando como parâmetro o ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": ["Autores"],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Autor não encontrado"
-          }
-        }
-      }
-    },
     "/livros/": {
       "get": {
-        "description": "Lista todos os livros cadastrados em formato JSON",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "tags": ["Livros"]
-        
-      },
-      "post": {
-        "description": "Rota para criação de Livros usando método POST e passando como parmetro os campos abaixo, ela tem um campo de chve estrangeira com a tabela Autores",
+        "tags": [
+          "Livros"
+        ],
+        "description": "Endpoint para retornar todos os livros",
         "parameters": [
           {
-            "name": "body",
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livros encontrados com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Livros"
+        ],
+        "description": "Endpoint para criar um livro",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "livro",
             "in": "body",
+            "description": "Informações do livro",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "titulo": {
-                  "example": "string"
+                  "type": "string",
+                  "example": "O Senhor dos Anéis"
                 },
                 "genero": {
-                  "example": "string"
+                  "type": "string",
+                  "example": "Fantasia"
                 },
-                "autorId": {
-                  "example": "int"
+                "autor": {
+                  "type": "string",
+                  "example": "J. R. R. Tolkien"
                 }
               }
             }
           }
         ],
-        "tags": ["Livros"],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Livro criado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/livros/{id}": {
       "get": {
-        "description": "Busca um Livro especifico por pelo seu ID",
+        "tags": [
+          "Livros"
+        ],
+        "description": "Endpoint para buscar um livro por id",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string",
+            "description": "Id do livro"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
-        "tags": ["Livros"],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Livro encontrado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
           },
           "404": {
             "description": "Livro não encontrado"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "put": {
-        "description": "Rota para atualizar um Livro baseado em seu ID através de uma requisição put passando os parametros que deseja alterar",
+        "tags": [
+          "Livros"
+        ],
+        "description": "Endpoint para atualizar um livro",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string",
+            "description": "Id do livro"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           },
           {
-            "name": "body",
+            "name": "livro",
             "in": "body",
+            "description": "Informações do livro",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "titulo": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "O Senhor dos Anéis"
                 },
                 "genero": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Fantasia"
                 },
-                "autorId": {
-                  "example": "any"
+                "autor": {
+                  "type": "string",
+                  "example": "J. R. R. Tolkien"
                 }
               }
             }
           }
         ],
-        "tags": ["Livros"],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Livro atualizado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
           },
           "404": {
             "description": "Livro não encontrado"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "delete": {
-        "description": "Rota para deletar um Livro baseado em seu ID",
+        "tags": [
+          "Livros"
+        ],
+        "description": "Endpoint para deletar um livro",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string",
+            "description": "Id do livro"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
-        "tags": ["Livros"],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "Livro deletado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
           },
           "404": {
             "description": "Livro não encontrado"
           }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para realizar o login de usuário, ao realizar o login um token JWT é gerado e armazenado no navegador.<br /> Este Token dura por 3 horas depois o usuário é deslogado do sistema. <br /> Sem logar não é possível acessar as outras telas do sistema caso tente será redirecionado para uma página de erro 404",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "body",
+            "description": "Informações de login",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "teste@gmail.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "123456"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso"
+          },
+          "401": {
+            "description": "Credenciais incorretas"
+          }
         }
+      },
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para verificar token JWT<br/>Token deve ser informado junto do seu prefixo: Bearer &#60;token&#62;",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token válido"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para listar todos os usuários",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuários listados com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para criar um usuário",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "description": "Informações do usuário",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Teste"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "teste@gmail.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "123456"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}": {
+      "get": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para buscar usuário por id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Usuário não encontrado"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para atualizar um usuário",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "body",
+            "description": "Informações do usuário",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string",
+                  "example": "Teste"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "teste@gmail.com"
+                },
+                "senha": {
+                  "type": "string",
+                  "example": "123456"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário atualizado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Usuário não encontrado"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Usuários"
+        ],
+        "description": "Endpoint para deletar um usuário",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id do usuário"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário deletado com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Usuário não encontrado"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/movimentos/": {
+      "get": {
+        "tags": [
+          "Movimentações"
+        ],
+        "description": "Endpoint para retornar todas as movimentações",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentações encontradas com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Movimentações"
+        ],
+        "description": "Endpoint para criar uma nova movimentação",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "movimentacao",
+            "in": "body",
+            "description": "Informações da movimentação",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataRetirada": {
+                  "type": "string",
+                  "example": "2024-06-10T03:00:00.000Z"
+                },
+                "dataDevolucao": {
+                  "type": "string",
+                  "example": "2024-06-20T03:00:00.000Z"
+                },
+                "livroId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "userId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Movimentação criada com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/movimentos/{id}": {
+      "get": {
+        "tags": [
+          "Movimentações"
+        ],
+        "description": "Endpoint para buscar movimentação por id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id da movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação encontrada com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Movimentação não encontrada"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Movimentações"
+        ],
+        "description": "Endpoint para atualizar uma movimentação",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id da movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "movimentacao",
+            "in": "body",
+            "description": "Informações da movimentação",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataRetirada": {
+                  "type": "string",
+                  "example": "2024-06-10T03:00:00.000Z"
+                },
+                "dataDevolucao": {
+                  "type": "string",
+                  "example": "2024-06-20T03:00:00.000Z"
+                },
+                "livroId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "userId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação atualizada com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Movimentação não encontrada"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Movimentações"
+        ],
+        "description": "Endpoint para deletar uma movimentação",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id da movimentação"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movimentação deletada com sucesso"
+          },
+          "401": {
+            "description": "Token não informado ou inválido"
+          },
+          "404": {
+            "description": "Movimentação não encontrada"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     }
   }
